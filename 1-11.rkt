@@ -12,10 +12,11 @@
       n
       (f-iter 0 1 2 (- n 2))))
 
-(define (f-iter a b c n)
-  (if (= n 0)
-      c
-      (f-iter b c (+ c (* 2 b) (* 3 a)) (- n 1))))
+  (define (f-iter a b c n)
+    (if (= n 0)
+        c
+        (f-iter b c (+ c (* 2 b) (* 3 a)) (- n 1))))
+
 
 (f 1)
 (f2 1)
@@ -29,3 +30,5 @@
 (f2 5)
 (f 6)
 (f2 6)
+(f 7)
+(f2 7)
