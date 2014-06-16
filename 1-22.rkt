@@ -1,0 +1,41 @@
+#! /Applications/Racket v6.0.1/bin/racket
+#lang planet neil/sicp
+
+(define (divides? n d)
+  (= (remainder n d) 0))
+(define (smallest-divisor n)
+  (define (find-divisor n d)
+    (cond ((> (* d d) n) n)
+          ((divides? n d) d)
+          (else (find-divisor n (+ d 1)))))
+  (find-divisor n 2))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+(define (start-prime-test n start-time)
+  (if (prime? n)
+      (report-prime (- (runtime) start-time))))
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+(define (search-for-primes start)
+  (define (iter cur count)
+    (if (= count 3)
+        (timed-prime-test (- cur 2))
+        (if (prime? cur)
+            (iter (+ cur 2) (+ count 1))
+            (iter (+ cur 2) count))))
+  (if (even? start)
+      (iter (+ start 1) 0)
+      (iter start 0)))
+
+(search-for-primes 1000)
+(search-for-primes 10000)
+(search-for-primes 100000)
+(search-for-primes 1000000)
