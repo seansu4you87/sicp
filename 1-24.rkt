@@ -1,0 +1,60 @@
+#! /Applications/Racket v6.0.1/bin/racket
+#lang planet neil/sicp
+
+(define (square x)
+  (* x x))
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? ) (remainder (square (expmod base (/ exp 2) m)) m))
+        (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else false)))
+
+(define (divides? n d)
+  (= (remainder n d) 0))
+(define (smallest-divisor n)
+  (define (find-divisor n d)
+    (cond ((> (* d d) n) n)
+          ((divides? n d) d)
+          (else (find-divisor n (+ d 1)))))
+  (find-divisor n 2))
+
+(define (prime? n)
+  ; (= n (smallest-divisor n)))
+  (fast-prime? n 1))
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+(define (start-prime-test n start-time)
+  (if (prime? n)
+      (report-prime (- (runtime) start-time))))
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+(define (search-for-primes start)
+  (define (iter cur count)
+    (if (= count 3)
+        (timed-prime-test (- cur 2))
+        (if (prime? cur)
+            (iter (+ cur 2) (+ count 1))
+            (iter (+ cur 2) count))))
+  (if (even? start)
+      (iter (+ start 1) 0)
+      (iter start 0)))
+
+(search-for-primes 1000)
+(search-for-primes 10000)
+(search-for-primes 100000)
+(search-for-primes 1000000)
