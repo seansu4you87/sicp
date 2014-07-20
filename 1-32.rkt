@@ -9,6 +9,13 @@
                 (accumulate combiner null-term term (next a) next b))))
 
 ;; accumulate-iter
+(define (acc-iter combiner null-term term a next b)
+  (define (iter curr result)
+    (if (> curr b)
+        result
+        (iter (next curr) (combiner result (term curr)))))
+  (iter a null-term))
+
 
 ;; helpers for sum and product
 (define (id x) x)
@@ -16,11 +23,11 @@
 
 ;; sum in accumulate
 (define (sum a b)
-  (accumulate + 0 id a incr b))
+  (acc-iter + 0 id a incr b))
 
 ;; product in accumulate
 (define (product a b)
-  (accumulate * 1 id a incr b))
+  (acc-iter * 1 id a incr b))
 
 ;; tests
 (sum 1 5)
