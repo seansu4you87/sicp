@@ -40,12 +40,23 @@ accSeq op init Nil = init
 accSeq op init (Cons (Value car) cdr) = op car (accSeq op init cdr)
 accSeq op init (Cons carList cdr)     = accSeq op (accSeq op init carList) cdr
 
+filtSeq :: (Show a) => (a -> Bool) -> List a -> List a
+filtSeq f Nil = Nil
+filtSeq f (Cons (Value car) cdr) | f car = Cons (Value car) (filtSeq f cdr)
+                                 | otherwise   = filtSeq f cdr
+
 uniquePairs :: (Show a, Num a, Enum a) => a -> List (List a)
 uniquePairs n = accSeq append Nil (fmap f (list [1..n]))
   where
-    f = \i -> fmap (\j -> list [i,j]) (list [1..i])
+    f = \i -> fmap (\j -> list [i,j]) (list [1..(i-1)])
+
+sumPairs :: (Show a, Num a, Enum a, Eq a) => a -> a -> List (List a)
+sumPairs n s = filtSeq sumEq (uniquePairs n)
+  where
+    sumEq pair = (car pair) + (car (cdr pair)) == s
 
 main :: IO ()
 main = do
-  pairs <- return $ uniquePairs 6
+  pairs <- return $ sumPairs 4 4
   putStrLn $ show pairs
+
